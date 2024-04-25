@@ -1,6 +1,8 @@
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { signIn } from '@/api/autenticacao'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,9 +21,16 @@ export default function Signin() {
     formState: { isSubmitting },
   } = useForm<SignInForm>()
 
+  const { mutateAsync: autenticacao } = useMutation({
+    mutationFn: signIn,
+  })
+
   async function handleSignIn(data: SignInForm) {
-    await new Promise((resolve) => setTimeout(resolve, 200))
-    console.log(data)
+    try {
+      await autenticacao({ email: data.email, password: data.password })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
